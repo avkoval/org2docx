@@ -1,0 +1,62 @@
+{
+  "description": "Formal document: Times New Roman 14 pt, line spacing 1.5, first-line indent 1.25 cm, justified text, numbered headings, table of contents, A4 with a wide left margin.",
+  "caption_table": "Таблиця",
+  "caption_figure": "Рисунок",
+  "caption_separator": ".",
+  "toc": true,
+  "toc_title": "ЗМІСТ",
+  "toc_levels": 3,
+  "pdf": true,
+  "number_headings": true,
+  "appendix_lettering": true,
+  "appendix_word": "Додаток",
+  "appendix_page_break": true,
+  "number_uncaptioned_diagrams": true,
+  "code_block_size_pt": 8,
+  "table": {
+    "header_fill": "EFEFEF",
+    "border_color": "000000",
+    "border_size": 8,
+    "inline_code_size_pt": 10,
+    "cell_char_twips": 125,
+    "cell_mono_twips": 120,
+    "cell_pad_twips": 260
+  },
+  "by_language": {
+    "en": {"caption_table": "Table", "caption_figure": "Figure", "toc_title": "CONTENTS", "appendix_word": "Appendix"}
+  },
+  "reference": {
+    "font": "Times New Roman",
+    "mono_font": "Liberation Mono",
+    "size_pt": 14,
+    "line": 360,
+    "first_line_indent": 720,
+    "paragraph_after": 0,
+    "align": "both",
+    "lang": "uk-UA",
+    "table_text_size_pt": 11,
+    "table_line": 276,
+    "code_size_pt": 8,
+    "inline_code_size_pt": 12,
+    "code_fill": "F2F2F2",
+    "caption_size_pt": 12,
+    "caption_line": 276,
+    "quote_size_pt": 12,
+    "footnote_size_pt": 10,
+    "link_color": "1F3864",
+    "toc_line": 276,
+    "title": {"size_pt": 16, "subtitle_size_pt": 14, "before": 2400},
+    "headings": [
+      {"bold": true, "before": 400, "after": 400, "line": 240, "align": "both"},
+      {"bold": true, "before": 400, "after": 400, "line": 240, "align": "both"},
+      {"bold": true, "before": 400, "after": 400, "line": 240, "align": "both"},
+      {"bold": true, "italic": true, "before": 240, "after": 240, "line": 240, "align": "both"},
+      {"bold": false, "italic": true, "before": 240, "after": 120, "line": 240, "align": "both"},
+      {"bold": false, "italic": true, "before": 240, "after": 120, "line": 240, "align": "both"}
+    ],
+    "page": {"width": 11906, "height": 16838, "top": 562, "bottom": 562, "left": 1123, "right": 562,
+             "header": 720, "footer": 720},
+    "page_number": "right",
+    "page_number_on_first_page": false
+  }
+}

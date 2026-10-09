@@ -1,0 +1,62 @@
+{
+  "description": "Internal document: Liberation Sans 11 pt, single line spacing, no first-line indent, left-aligned text, 2 cm margins, numbered headings, no table of contents by default.",
+  "caption_table": "Таблиця",
+  "caption_figure": "Рисунок",
+  "caption_separator": ".",
+  "toc": false,
+  "toc_title": "Зміст",
+  "toc_levels": 3,
+  "pdf": true,
+  "number_headings": true,
+  "appendix_lettering": false,
+  "appendix_word": "Додаток",
+  "appendix_page_break": false,
+  "number_uncaptioned_diagrams": false,
+  "code_block_size_pt": 8,
+  "table": {
+    "header_fill": "EFEFEF",
+    "border_color": "000000",
+    "border_size": 4,
+    "inline_code_size_pt": 9,
+    "cell_char_twips": 115,
+    "cell_mono_twips": 108,
+    "cell_pad_twips": 240
+  },
+  "by_language": {
+    "en": {"caption_table": "Table", "caption_figure": "Figure", "toc_title": "Contents", "appendix_word": "Appendix"}
+  },
+  "reference": {
+    "font": "Liberation Sans",
+    "mono_font": "Liberation Mono",
+    "size_pt": 11,
+    "line": 240,
+    "first_line_indent": 0,
+    "paragraph_after": 120,
+    "list_item_after": 40,
+    "align": "left",
+    "lang": "uk-UA",
+    "table_text_size_pt": 10,
+    "table_line": 240,
+    "code_size_pt": 8,
+    "inline_code_size_pt": 10,
+    "code_fill": "F2F2F2",
+    "caption_size_pt": 10,
+    "caption_line": 240,
+    "quote_size_pt": 10,
+    "footnote_size_pt": 9,
+    "link_color": "1F4E79",
+    "toc_line": 240,
+    "title": {"size_pt": 20, "subtitle_size_pt": 13, "before": 0},
+    "headings": [
+      {"size_pt": 16, "bold": true, "before": 360, "after": 120},
+      {"size_pt": 13, "bold": true, "before": 240, "after": 120},
+      {"size_pt": 12, "bold": true, "before": 240, "after": 80},
+      {"size_pt": 11, "bold": true, "italic": true, "before": 200, "after": 80},
+      {"size_pt": 11, "bold": false, "italic": true, "before": 200, "after": 60}
+    ],
+    "page": {"width": 11906, "height": 16838, "top": 1134, "bottom": 1134, "left": 1134, "right": 1134,
+             "header": 567, "footer": 567},
+    "page_number": "right",
+    "page_number_on_first_page": true
+  }
+}

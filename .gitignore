@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.elc
+# test and export outputs
+*.org2docx-build/
+/test-output/
+/tests/out/
+*.pandoc.docx
