@@ -172,7 +172,10 @@ Output goes next to the Org file as <basename>.docx and .pdf."
         (let ((inhibit-read-only t))
           (erase-buffer)
           (insert (format "$ %s %s\n\n" org2docx-python (mapconcat #'shell-quote-argument args " ")))))
-      (let ((proc (make-process :name "org2docx"
+      ;; No .pyc writes: LibreOffice's bundled Python would write them inside the signed
+      ;; LibreOffice.app on macOS, breaking its code seal so the system kills it at launch.
+      (let* ((process-environment (cons "PYTHONDONTWRITEBYTECODE=1" process-environment))
+             (proc (make-process :name "org2docx"
                                 :buffer buf
                                 :command (cons org2docx-python args)
                                 :connection-type 'pipe

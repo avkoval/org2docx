@@ -324,12 +324,7 @@ def free_port():
 def lo_uno(soffice, docx_in, docx_out, pdf_out, timeout=180):
     """Open in LibreOffice through UNO, refresh indexes (TOC) and fields twice, save DOCX and optionally PDF."""
     import uno
-    from com.sun.star.beans import PropertyValue
-
-    def prop(name, value):
-        p = PropertyValue()
-        p.Name, p.Value = name, value
-        return p
+    from org2docx_lo import refresh_and_save
 
     profile = pathlib.Path(tempfile.mkdtemp(prefix="org2docx-lo-"))
     port = free_port()
@@ -353,25 +348,10 @@ def lo_uno(soffice, docx_in, docx_out, pdf_out, timeout=180):
         if ctx is None:
             raise Fail("LibreOffice did not accept a connection within 60 s")
         desktop = ctx.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", ctx)
-        doc = desktop.loadComponentFromURL(uno.systemPathToFileUrl(str(docx_in)), "_blank", 0,
-                                           (prop("Hidden", True),))
-        if doc is None:
-            raise Fail("LibreOffice could not open the intermediate DOCX")
-        for _ in range(2):  # the TOC itself changes pagination
-            idx = doc.getDocumentIndexes()
-            for i in range(idx.getCount()):
-                idx.getByIndex(i).update()
-            doc.getTextFields().refresh()
-        doc.storeToURL(uno.systemPathToFileUrl(str(docx_out)), (prop("FilterName", "MS Word 2007 XML"),))
-        if pdf_out:
-            doc.storeToURL(uno.systemPathToFileUrl(str(pdf_out)),
-                           (prop("FilterName", "writer_pdf_Export"),
-                            prop("FilterData", uno.Any("[]com.sun.star.beans.PropertyValue", tuple([
-                                prop("ExportBookmarks", True), prop("ExportLinksRelativeFsys", False),
-                                prop("ConvertOOoTargetToPDFTarget", True),
-                                prop("ExportBookmarksToPDFDestination", True),
-                            ])))))
-        doc.close(True)
+        try:
+            refresh_and_save(desktop, docx_in, docx_out, pdf_out)
+        except RuntimeError as e:
+            raise Fail(str(e)) from e
     finally:
         try:
             if desktop is not None:
@@ -382,6 +362,31 @@ def lo_uno(soffice, docx_in, docx_out, pdf_out, timeout=180):
             proc.wait(timeout=20)
         except subprocess.TimeoutExpired:
             proc.kill()
+        shutil.rmtree(profile, ignore_errors=True)
+
+
+def lo_macro(soffice, docx_in, docx_out, pdf_out, workdir, timeout=600):
+    """Without the UNO bridge: run org2docx_lo.py as a Python macro inside soffice (same result as lo_uno)."""
+    profile = pathlib.Path(tempfile.mkdtemp(prefix="org2docx-lo-"))
+    try:
+        scripts = profile / "user" / "Scripts" / "python"
+        scripts.mkdir(parents=True)
+        shutil.copyfile(HERE / "org2docx_lo.py", scripts / "org2docx_lo.py")
+        job, status = workdir / "lo-job.json", workdir / "lo-status.txt"
+        job.write_text(json.dumps({"docx_in": str(docx_in), "docx_out": str(docx_out),
+                                   "pdf_out": str(pdf_out) if pdf_out else None, "status": str(status)}),
+                       encoding="utf-8")
+        r = subprocess.run([soffice, "--headless", "--invisible", "--nologo", "--norestore", "--nolockcheck",
+                            f"-env:UserInstallation={profile.as_uri()}",
+                            "vnd.sun.star.script:org2docx_lo.py$main?language=Python&location=user"],
+                           capture_output=True, text=True, timeout=timeout,
+                           env={**os.environ, "ORG2DOCX_LO_JOB": str(job), "PYTHONDONTWRITEBYTECODE": "1"})
+        if not status.exists():
+            raise Fail(f"LibreOffice macro did not run (status {r.returncode}): {r.stderr.strip()[-500:]}")
+        result = status.read_text(encoding="utf-8")
+        if result != "ok":
+            raise Fail(f"LibreOffice macro failed:\n{result}")
+    finally:
         shutil.rmtree(profile, ignore_errors=True)
 
 
@@ -462,12 +467,15 @@ def convert(args) -> int:
                 have_uno = True
             except ImportError:
                 have_uno = False
-                log(f"WARNING: the LibreOffice Python bridge (import uno) is not available to {sys.executable}; "
-                    "falling back to soffice --convert-to: the table of contents is not refreshed")
             if have_uno:
                 lo_uno(soffice, raw, docx, pdf_target)
             else:
-                lo_convert(soffice, raw, docx, pdf_target, workdir)
+                try:
+                    lo_macro(soffice, raw, docx, pdf_target, workdir)
+                except Fail as e:
+                    log(f"WARNING: {e}")
+                    log("falling back to soffice --convert-to: the table of contents is not refreshed")
+                    lo_convert(soffice, raw, docx, pdf_target, workdir)
 
         if "@startuml" in xml:
             log("WARNING: PlantUML source remains in the document (plantuml missing or failed)")
